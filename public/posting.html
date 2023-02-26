@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title> Post </title>
+    </head> 
+    <boody>
+        <script>
+            function send() {
+                fetch('/addPost', {
+                    method: 'POST',
+                    body: new URLSearchParams({
+                        ftopic: document.getElementById("ftopic").value,
+                        fdata: document.getElementById("fdata").value
+                    }).toString(),
+                    headers: {"Content-type": "application/x-www-form-urlencoded"}
+                })
+                .then(response => response.json())
+                .then(console.log(document.getElementById("ftopic").value))
+                .then(fdata => console.log(fdata))
+                .catch(error => console.error(error))
+                alert("New post inserted");
+            }
+            function read() {
+                fetch('/getPosts', {
+                    method: 'GET'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    var post_space = document.getElementById("Output");
+                    while (post_space.firstChild) {
+                        post_space.removeChild(post_space.firstChild);
+                    }
+                    for (var i = 0; i < data.posts.length; i++) {
+                        var post = document.createElement("p");
+                        post.innerHTML = "ID:"+data.posts[i]["id"]+", Topic: "+data.posts[i]["topic"]+", Data: "+data.posts[i]["data"];
+                        post_space.appendChild(post);
+                    }
+            })
+                .catch(error => console.error(error)) 
+            }
+        </script>
+        <label for="ftopic">Topic:</label>
+        <input type="text" id="ftopic" name="ftopic"><br><br>
+        <label for="fdata">Data:</label>
+        <textarea  id="fdata" name="fdata"></textarea><br><br>
+        <button onclick="send()">add post</button><br><br>
+        <button onclick="read()">get posts</button><br><br>
+        <div id="Output"></div>
+    </body>
+</html>
